@@ -380,6 +380,16 @@ class DescribeDocument(object):
 
 class Describe_Body(object):
 
+    def it_provides_access_to_its_bookmarks(self, Bookmarks_, bookmarks_):
+        body_elm = element('w:body')
+        Bookmarks_.return_value = bookmarks_
+        body = _Body(body_elm, None)
+
+        bookmarks = body.bookmarks
+
+        Bookmarks_.assert_called_once_with(body_elm)
+        assert bookmarks is bookmarks_
+
     def it_can_clear_itself_of_all_content_it_holds(self, clear_fixture):
         body, expected_xml = clear_fixture
         _body = body.clear_content()
@@ -399,3 +409,13 @@ class Describe_Body(object):
         body = _Body(element(before_cxml), None)
         expected_xml = xml(after_cxml)
         return body, expected_xml
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def Bookmarks_(self, request):
+        return class_mock(request, 'docx.document.Bookmarks')
+
+    @pytest.fixture
+    def bookmarks_(self, request):
+        return instance_mock(request, Bookmarks)

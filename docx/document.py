@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 from docx.blkcntnr import BlockItemContainer
+from docx.bookmark import Bookmarks
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_BREAK
 from docx.section import Section, Sections
@@ -219,7 +220,7 @@ class _Body(BlockItemContainer):
     @lazyproperty
     def bookmarks(self):
         """|Bookmarks| object providing access to main story bookmarks."""
-        raise NotImplementedError
+        return Bookmarks(self._body)
 
     def clear_content(self):
         """
