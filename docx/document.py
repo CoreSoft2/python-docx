@@ -8,11 +8,11 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals
 )
 
-from .blkcntnr import BlockItemContainer
-from .enum.section import WD_SECTION
-from .enum.text import WD_BREAK
-from .section import Section, Sections
-from .shared import ElementProxy, Emu
+from docx.blkcntnr import BlockItemContainer
+from docx.enum.section import WD_SECTION
+from docx.enum.text import WD_BREAK
+from docx.section import Section, Sections
+from docx.shared import ElementProxy, Emu, lazyproperty
 
 
 class Document(ElementProxy):
@@ -99,6 +99,17 @@ class Document(ElementProxy):
         table = self._body.add_table(rows, cols, self._block_width)
         table.style = style
         return table
+
+    @property
+    def bookmarks(self):
+        """|Bookmarks| object providing access to |Bookmark| objects.
+
+        This feature is PARTIAL and EXPERIMENTAL. The current implementation
+        only provides access to bookmarks in the main document story.
+        Conflicts may arise if a bookmark is added with the same name as one
+        appearing in another story such as a header or footer etc.
+        """
+        return self._body.bookmarks
 
     @property
     def core_properties(self):
@@ -204,6 +215,11 @@ class _Body(BlockItemContainer):
     def __init__(self, body_elm, parent):
         super(_Body, self).__init__(body_elm, parent)
         self._body = body_elm
+
+    @lazyproperty
+    def bookmarks(self):
+        """|Bookmarks| object providing access to main story bookmarks."""
+        raise NotImplementedError
 
     def clear_content(self):
         """
